@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+      .tableWrap {
+        width: 48%;
+        display: inline-block;
+        margin-right: 20px;
+        vertical-align: top;
+      }
+      /* The Modal (background) */
+      .searchModal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 10; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0); /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+      }
+      /* Modal Content/Box */
+      .search-modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 70%; /* Could be more or less, depending on screen size */
+      }
+    </style>
+  </head>
+
+  <script>
+    // 준나 파훼법을 적어놓자!!
+    // 파훼법 변수는 몬스터 obj의 key값으로 만든다..
+    const attack = {
+      monster4_001: `
+      [불스나 물늑인 풍하프]
+    ◆ : 5점만점 안정성 
+1. 물프랑캔, 물늑인, 빛머메 (풍하프)  ◆ ◆ ◆ ◆ ◆
+ - 턴순서 : 상관없음 
+ - 물프랑캔 흡,파 
+ - 타겟팅 순서 : 불스나 -> 물늑인 -> 풍하프 순 
+
+2. 불닌자, 불하엘(2각), 풍하프   ◆ ◆ ◆ ◆
+ - 턴순서 : 불하엘 - 불닌자 - 풍하프 
+ - 불닌자 흡의, 불하엘 너무 느리면안됨 최소뒷속 130 이상이 안전, 불닌자는 가능한 불하엘과 뒷속 가깝게
+ - 타겟팅 순서 : 풍하프 -> 불스나 -> 물늑인
+
+3. 암늑인, 물늑인, 물호울  ◆ ◆ ◆ ◆ ◆
+ - 턴순서 : 물호울 선턴만 아니면됨
+ - 암늑인 뒷체 3.5이상 , 반반반베스트, 반반잡 
+ - 타겟팅 순서 : 불스나 -> 물늑인 -> 풍하프 
+
+4. 물차, 물부, 불하프  ◆ ◆ ◆ ◆
+ - 불하프 마지막 
+ - 불하프 탱작,  
+ - 불스나 - 물늑인 - 풍하프 
+
+5. 암부, 불차, 풍하프   ◆ ◆ ◆
+ - 풍하프 마지막 
+ - 탱작 풍하프 or 딜작풍하프  
+ - 불스나 먼저 
+
+6. 빛골렘, 물늑, 물호울 / 불무도가도 가능   ◆ ◆ ◆ ◆ ◆
+- 상관없음 
+- 빛골렘 반반파 or 흡파 
+- 불스나 - 물늑 - 풍하프 
+`,
+    };
+  </script>
+
+  <script>
+    // 4성 방덱 arr
+    const monster4 = [
+      { one: "불스나", two: "물늑인", three: "풍하프", key: "monster4_001" },
+      { one: "불스나", two: "풍요괴", three: "빛,암메머", key: "monster4_002" },
+      { one: "물늑인", two: "풍하프", three: "불요괴", key: "monster4_003" },
+    ];
+    // 5성 방덱 arr
+    const monster5 = [
+      { one: "불스나", two: "물라클", three: "풍비라", key: "monster5_001" },
+      { one: "불스나", two: "불화백", three: "풍비라", key: "monster5_002" },
+      { one: "불스나", two: "불피애", three: "풍비라", key: "monster5_003" },
+      { one: "불스나", two: "풍팔라", three: "물비라", key: "monster5_004" },
+    ];
+    $(function () {
+      $("#myBtn").click(function () {
+        $("#myModal").modal();
+      });
+
+      // 테이블 그리기
+      // 4성
+      fnDrawMonster4(monster4);
+
+      // 5성
+      fnDrawMonster5(monster5);
+    });
+    // 팝업 버튼
+    function fnDynamicEvent() {
+      $("[name='popBtn']").off("click");
+      $("[name='popBtn']").on("click", function () {
+        $("#myModal .modal-body > p").html("");
+        $("#myModal .modal-body > p").append(
+          "<pre>" + attack[$(this).data("key")] + "</pre>"
+        );
+
+        $("#myModal").modal("show");
+      });
+    }
+
+    function fnDrawMonster4(obj) {
+      obj.forEach((element) => {
+        let tempHtml = "";
+        tempHtml += "<tr>";
+        tempHtml += "<td>" + element.one + "</td>";
+        tempHtml += "<td>" + element.two + "</td>";
+        tempHtml += "<td>" + element.three + "</td>";
+        tempHtml +=
+          "<td><button type='button' name='popBtn' data-key='" +
+          element.key +
+          "'class='btn btn-primary btn-lg'>공략확인</button></td>";
+        tempHtml += "</tr>";
+        $("#monster4").append(tempHtml);
+      });
+
+      fnDynamicEvent();
+    }
+    function fnDrawMonster5(obj) {
+      obj.forEach((element) => {
+        let tempHtml = "";
+        tempHtml += "<tr>";
+        tempHtml += "<td>" + element.one + "</td>";
+        tempHtml += "<td>" + element.two + "</td>";
+        tempHtml += "<td>" + element.three + "</td>";
+        tempHtml +=
+          "<td><button type='button' name='popBtn' class='btn btn-primary btn-lg'>공략확인</button></td>";
+        tempHtml += "</tr>";
+        $("#monster5").append(tempHtml);
+      });
+    }
+  </script>
+  <body>
+    <div class="pageWrap">
+      <h1 style="text-align: center; margin-bottom: 20px">MVP 점령전 공덱!!</h1>
+      <div class="tableWrap">
+        <table class="table" id="monster4">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">First</th>
+              <th scope="col">second</th>
+              <th scope="col">third</th>
+              <th scope="col">공략</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="tableWrap">
+        <table class="table" id="monster5">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">First</th>
+              <th scope="col">second</th>
+              <th scope="col">third</th>
+              <th scope="col">공략</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- 모달 영역 -->
+      <div id="modal" class="searchModal">
+        <div class="search-modal-content">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="row">
+                <div class="modalContents col-sm-12"></div>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div
+            style="
+              cursor: pointer;
+              background-color: #dddddd;
+              text-align: center;
+              padding-bottom: 10px;
+              padding-top: 10px;
+            "
+            onClick="closeModal();"
+          >
+            <span class="pop_bt modalCloseBtn" style="font-size: 13pt"
+              >닫기</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+            <h4 class="modal-title">공덱확인</h4>
+          </div>
+          <div class="modal-body">
+            <p>Some text in the modal.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
